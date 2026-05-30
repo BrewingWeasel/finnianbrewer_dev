@@ -22,6 +22,27 @@ pub fn github() {
   )
 }
 
+pub fn git() {
+  svg.svg(
+    [
+      attribute("xmlns", "http://www.w3.org/2000/svg"),
+      attribute("viewBox", "0 0 24 24"),
+      attribute("width", "24"),
+      attribute("height", "24"),
+      attribute("fill", "currentColor"),
+      attribute.role("img"),
+    ],
+    [
+      svg.path([
+        attribute(
+          "d",
+          "M13.09 23.549a1.54 1.54 0 0 1-2.18 0L.451 13.089a1.54 1.54 0 0 1 0-2.179l7.191-7.19 2.733 2.733a1.85 1.85 0 0 0 .964 2.326v6.66a1.849 1.849 0 1 0 1.54 0V8.957l2.508 2.508a1.85 1.85 0 1 0 1.09-1.09l-2.634-2.634a1.85 1.85 0 0 0-2.378-2.377L8.73 2.63 10.91.451a1.54 1.54 0 0 1 2.179 0l10.459 10.46a1.54 1.54 0 0 1 0 2.179z",
+        ),
+      ]),
+    ],
+  )
+}
+
 pub fn linkedin() {
   svg.svg(
     [
@@ -82,6 +103,61 @@ pub fn resume() {
         ]),
         svg.polyline([attribute.attribute("points", "10 9 9 9 8 9")]),
       ]),
+    ],
+  )
+}
+
+pub fn globe() {
+  svg.svg(
+    [
+      attribute.attribute("xmlns", "http://www.w3.org/2000/svg"),
+      attribute.attribute("width", "24"),
+      attribute.attribute("height", "24"),
+      attribute.attribute("viewBox", "0 0 24 24"),
+      attribute.attribute("fill", "none"),
+      attribute.attribute("stroke", "currentColor"),
+      attribute.attribute("stroke-width", "2"),
+      attribute.attribute("stroke-linecap", "round"),
+      attribute.attribute("stroke-linejoin", "round"),
+      attribute.role("img"),
+    ],
+    [
+      svg.circle([
+        attribute("r", "10"),
+        attribute("cy", "12"),
+        attribute("cx", "12"),
+      ]),
+      svg.path([
+        attribute("d", "M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"),
+      ]),
+      svg.path([attribute("d", "M2 12h20")]),
+    ],
+  )
+}
+
+pub fn book() {
+  svg.svg(
+    [
+      attribute.attribute("xmlns", "http://www.w3.org/2000/svg"),
+      attribute.attribute("width", "24"),
+      attribute.attribute("height", "24"),
+      attribute.attribute("viewBox", "0 0 24 24"),
+      attribute.attribute("fill", "none"),
+      attribute.attribute("stroke", "currentColor"),
+      attribute.attribute("stroke-width", "2"),
+      attribute.attribute("stroke-linecap", "round"),
+      attribute.attribute("stroke-linejoin", "round"),
+      attribute.role("img"),
+    ],
+    [
+      svg.path([
+        attribute(
+          "d",
+          "M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20",
+        ),
+      ]),
+      svg.path([attribute("d", "M8 11h8")]),
+      svg.path([attribute("d", "M8 7h6")]),
     ],
   )
 }

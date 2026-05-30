@@ -1,5 +1,6 @@
 import ethereal
 import gleam/dynamic/decode
+import gleam/list
 import gleam/option.{type Option, Some}
 import javascript/mutable_reference.{type MutableReference}
 import lustre/attribute
@@ -11,12 +12,17 @@ import site/components/bars_animation
 import site/components/icon
 
 pub type Model {
-  Model(mouse_coords: MutableReference(Option(#(Int, Int))))
+  Model(mouse_coords: MutableReference(Option(#(Int, Int))), page: Page)
+}
+
+pub type Page {
+  Home
+  Projects
 }
 
 pub fn new() -> #(Model, effect.Effect(Msg)) {
   #(
-    Model(mouse_coords: mutable_reference.new(option.None)),
+    Model(mouse_coords: mutable_reference.new(option.None), page: Home),
     effect.after_paint(fn(dispatch, _) { dispatch(StartAnimation) }),
   )
 }
@@ -44,7 +50,7 @@ pub fn icon(icon, label, link) {
     [
       attribute.href(link),
       attribute.class(
-        "bg-dark/10 dark:bg-light/10 p-2 rounded-lg text-dark dark:text-light hover:scale-110 transition-transform ease-in-out duration-200",
+        "bg-dark/10 dark:bg-dark-0-5 p-2 rounded-lg text-dark dark:text-light hover:scale-110 transition-transform ease-in-out duration-200",
       ),
       attribute.attribute("aria-label", label),
       attribute.attribute("target", "_blank"),
@@ -56,7 +62,11 @@ pub fn icon(icon, label, link) {
   )
 }
 
-pub fn view(_model: Model) -> element.Element(Msg) {
+pub fn view(model: Model) -> element.Element(Msg) {
+  let contents = case model.page {
+    Home -> homepage()
+    Projects -> projects()
+  }
   html.div([], [
     html.canvas([
       attribute.id("canvas"),
@@ -73,9 +83,18 @@ pub fn view(_model: Model) -> element.Element(Msg) {
     ]),
     html.div(
       [
-        attribute.class(
-          "bg-light dark:bg-dark w-screen h-screen flex items-center",
-        ),
+        attribute.class("bg-light dark:bg-dark w-screen h-screen flex"),
+      ],
+      contents,
+    ),
+  ])
+}
+
+fn homepage() {
+  [
+    html.div(
+      [
+        attribute.class("h-screen flex items-center"),
       ],
       [
         html.div([attribute.class("flex flex-col items-center gap-1 ml-30")], [
@@ -111,9 +130,6 @@ pub fn view(_model: Model) -> element.Element(Msg) {
               element.text(
                 "Fan of functional programming, language learning, PLT, and backpacking.",
               ),
-              // element.text(
-            //   "Hello! I'm a first-year at Oregon State University majoring in Computer Science and Religious Studies. My interests include functional programming, running, language learning, programming language theory, and backpacking.",
-            // ),
             ],
           ),
           html.div(
@@ -148,5 +164,129 @@ pub fn view(_model: Model) -> element.Element(Msg) {
         ]),
       ],
     ),
-  ])
+  ]
+}
+
+fn projects() {
+  [
+    html.div(
+      [
+        attribute.class(
+          "bg-light dark:bg-dark h-screen flex flex-col ml-44 mt-30 gap-3",
+        ),
+      ],
+      [
+        html.h1(
+          [
+            attribute.class(
+              "text-4xl font-bold text-left text-dark dark:text-light",
+            ),
+          ],
+          [
+            html.text("Projects"),
+          ],
+        ),
+        project(
+          "Gleamgen",
+          "Intelligent and type-safe Gleam codegen library.",
+          [
+            #(icon.book(), "https://gleamgen.hexdocs.pm/"),
+            #(icon.git(), "https://github.com/brewingweasel/gleamgen"),
+          ],
+          ["Gleam"],
+        ),
+        project(
+          "Lilac",
+          "String manipulation language based on pattern matching and recursion.",
+          [
+            #(icon.git(), "https://github.com/brewingweasel/lilac"),
+          ],
+          ["OCaml", "PLT"],
+        ),
+        project(
+          "helpmyfriendcantdraw",
+          "Concurrent multiplayer drawing website made with Gleam and OTP.",
+          [
+            #(icon.globe(), "https://helpmyfriendcantdraw.fly.dev"),
+            #(icon.git(), "https://git.com/brewingweasel/helpmyfriendcantdraw"),
+          ],
+          ["Gleam", "Erlang"],
+        ),
+        project(
+          "Kalba Reader",
+          "Desktop sentence mining and language learning application with a focus on extensibility and Anki integration.",
+          [
+            #(icon.git(), "https://github.com/brewingweasel/Kalba"),
+          ],
+          ["Rust", "Tauri", "Vue.js"],
+        ),
+        project(
+          "Shush",
+          "An experiment of creating a typed language that compiles to POSIX sh.",
+          [
+            #(icon.git(), "https://github.com/brewingweasel/shelltranspiler"),
+          ],
+          ["Rust", "PLT"],
+        ),
+      ],
+    ),
+  ]
+}
+
+fn project(name: String, description: String, links, tags) {
+  let icons =
+    links
+    |> list.map(fn(pair) {
+      let #(icon, address) = pair
+      html.a(
+        [
+          attribute.class(
+            "text-dark-3 dark:text-light-2 hover:scale-110 transition-transform ease-in-out duration-150",
+          ),
+          attribute.href(address),
+          attribute.target("_blank"),
+        ],
+        [icon],
+      )
+    })
+
+  let tags =
+    tags
+    |> list.map(fn(tag) {
+      html.span(
+        [
+          attribute.class("text-xs bg-dark-3 text-light px-2 py-1 rounded-lg"),
+        ],
+        [html.text(tag)],
+      )
+    })
+
+  html.div(
+    [
+      attribute.class(
+        "bg-light-2 dark:bg-dark-0-5 py-4 px-4 rounded-lg text-dark dark:text-light max-w-120",
+      ),
+      // attribute.href(link),
+    // attribute.target("_blank"),
+    ],
+    [
+      html.div([attribute.class("flex w-full justify-between")], [
+        html.h2(
+          [
+            attribute.class(
+              "text-2xl font-semibold text-dark-2 dark:text-light-3",
+            ),
+          ],
+          [
+            html.text(name),
+          ],
+        ),
+        html.div([attribute.class("flex gap-3")], icons),
+      ]),
+      html.p([], [
+        html.text(description),
+      ]),
+      html.div([attribute.class("flex gap-2 w-full mt-1 justify-end")], tags),
+    ],
+  )
 }
