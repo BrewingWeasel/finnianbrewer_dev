@@ -75,7 +75,7 @@ pub fn view(model: Model) -> element.Element(Msg) {
       html.canvas([
         attribute.id("canvas"),
         attribute.class(
-          "block fixed right-0 transform-[scaleX(-1)] md:top-0 bottom-0 md:bottom-auto max-md:translate-y-1/5 max-md:transform-[scale(-1.0)] z-0 "
+          "block fixed right-0 transform-[scaleX(-1)] md:top-0 bottom-0 md:bottom-auto max-md:translate-y-1/5 max-md:transform-[scale(-1.0)] z-0 max-md:pointer-events-none "
           <> mobile_classes,
         ),
         attribute.width(700),
