@@ -17,7 +17,7 @@ target = "javascript"
 gleam_stdlib = ">= 1.0.0 and < 2.0.0"
 lustre = ">= 5.7.0 and < 6.0.0"
 javascript_mutable_reference = ">= 1.0.0 and < 2.0.0"
-ethereal = { git = "https://github.com/BrewingWeasel/ethereal", ref = "d5e85ec" }
+ethereal = { git = "https://github.com/BrewingWeasel/ethereal", ref = "484170f" }
 gleam_community_colour = ">= 2.0.4 and < 3.0.0"
 mork = ">= 1.12.1 and < 2.0.0"
 maud = ">= 1.0.0 and < 2.0.0"

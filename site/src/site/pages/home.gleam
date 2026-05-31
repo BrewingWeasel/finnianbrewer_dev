@@ -35,11 +35,11 @@ pub type Msg {
 pub fn update(model: Model, message: Msg) -> #(Model, effect.Effect(Msg)) {
   case message {
     StartAnimation -> #(
-      echo model,
+      model,
       ethereal.init_animation("canvas", bars_animation.draw(model.mouse_coords)),
     )
     MouseMoved(x, y) -> {
-      mutable_reference.set(model.mouse_coords, Some(#(x, y)))
+      mutable_reference.set(model.mouse_coords, echo Some(#(x, y)))
       #(model, effect.none())
     }
   }
@@ -65,7 +65,7 @@ pub fn icon(icon, label, link) {
 pub fn view(model: Model) -> element.Element(Msg) {
   let #(contents, mobile_classes) = case model.page {
     Home -> #(homepage(), "")
-    Projects -> #(projects(), "max-sm:hidden")
+    Projects -> #(projects(), "max-md:hidden")
   }
   html.div(
     [
@@ -75,7 +75,7 @@ pub fn view(model: Model) -> element.Element(Msg) {
       html.canvas([
         attribute.id("canvas"),
         attribute.class(
-          "block fixed top-0 right-0 transform-[scaleX(-1)] max-sm:transform-[scale(-1.0)] pointer-events-none md:point-events-auto "
+          "block fixed right-0 transform-[scaleX(-1)] md:top-0 bottom-0 md:bottom-auto max-md:translate-y-1/5 max-md:transform-[scale(-1.0)] z-0 "
           <> mobile_classes,
         ),
         attribute.width(700),
@@ -107,7 +107,7 @@ fn homepage() {
             html.div(
               [
                 attribute.class(
-                  "flex flex-wrap items-center justify-center gap-2 sm:justify-start",
+                  "flex flex-wrap items-center justify-center gap-2 sm:justify-start z-10",
                 ),
               ],
               [
