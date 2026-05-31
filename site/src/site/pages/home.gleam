@@ -63,9 +63,9 @@ pub fn icon(icon, label, link) {
 }
 
 pub fn view(model: Model) -> element.Element(Msg) {
-  let contents = case model.page {
-    Home -> homepage()
-    Projects -> projects()
+  let #(contents, mobile_classes) = case model.page {
+    Home -> #(homepage(), "")
+    Projects -> #(projects(), "max-sm:hidden")
   }
   html.div(
     [
@@ -74,8 +74,10 @@ pub fn view(model: Model) -> element.Element(Msg) {
     [
       html.canvas([
         attribute.id("canvas"),
-        attribute.class("hidden sm:block fixed top-0 right-0"),
-        attribute.style("transform", "scaleX(-1)"),
+        attribute.class(
+          "block fixed top-0 right-0 transform-[scaleX(-1)] max-sm:transform-[scale(-1.0)] pointer-events-none md:point-events-auto "
+          <> mobile_classes,
+        ),
         attribute.width(700),
         attribute.height(1200),
         event.on("mousemove", {
@@ -95,86 +97,89 @@ fn homepage() {
     html.div(
       [
         attribute.class(
-          "min-h-dvh w-full flex items-center px-5 py-12 sm:px-10 md:px-16 lg:px-30",
+          "min-h-dvh w-full flex items-start justify-center px-5 pt-16 pb-12 sm:items-center sm:justify-start sm:px-10 sm:py-12 md:px-16 lg:px-30",
         ),
       ],
       [
-        html.div([attribute.class("flex flex-col items-center gap-1 ml-30")], [
-          html.div(
-            [
-              attribute.class(
-                "flex flex-wrap items-center justify-center gap-2 sm:justify-start",
-              ),
-            ],
-            [
-              html.h1(
-                [
-                  attribute.class(
-                    "w-full text-4xl font-bold text-center sm:text-left text-dark dark:text-light sm:w-auto sm:mr-4",
-                  ),
-                ],
-                [
-                  html.text("Finnian Brewer"),
-                ],
-              ),
-              icon(icon.github, "GitHub", "https://github.com/brewingweasel"),
-              icon(icon.linkedin, "LinkedIn", ""),
-              icon(icon.resume, "Resume", ""),
-            ],
-          ),
-          html.hr([
-            attribute.class("w-full border-t-2 border-dark dark:border-light"),
-          ]),
-          html.p(
-            [
-              attribute.class(
-                "max-w-102 text-center text-dark dark:text-light sm:text-left",
-              ),
-            ],
-            [
-              element.text("Computer Science & Religious Studies at "),
-              html.span([attribute.class("text-orange font-semibold")], [
-                element.text("Oregon State"),
-              ]),
-              element.text("."),
-              html.br([]),
-              element.text(
-                "Fan of functional programming, language learning, PLT, and backpacking.",
-              ),
-            ],
-          ),
-          html.div(
-            [
-              attribute.class(
-                "flex flex-wrap gap-6 items-center w-full p-1 justify-center sm:justify-end",
-              ),
-            ],
-            [
-              html.a(
-                [
-                  attribute.href("/projects"),
-                  attribute.class(
-                    "text-dark-2 dark:text-light-2 hover:underline",
-                  ),
-                ],
-                [
-                  html.text("/projects"),
-                ],
-              ),
-              html.a(
-                [
-                  attribute.href("/blog"),
-                  attribute.class(
-                    "text-dark-2 dark:text-light-2 hover:underline",
-                  ),
-                ],
-                [
-                  html.text("/blog"),
-                ],
-              ),
-            ],
-          ),
-        ]),
+        html.div(
+          [attribute.class("flex flex-col items-center gap-1 sm:ml-30")],
+          [
+            html.div(
+              [
+                attribute.class(
+                  "flex flex-wrap items-center justify-center gap-2 sm:justify-start",
+                ),
+              ],
+              [
+                html.h1(
+                  [
+                    attribute.class(
+                      "w-full text-4xl font-bold text-center sm:text-left text-dark dark:text-light sm:w-auto sm:mr-4",
+                    ),
+                  ],
+                  [
+                    html.text("Finnian Brewer"),
+                  ],
+                ),
+                icon(icon.github, "GitHub", "https://github.com/brewingweasel"),
+                icon(icon.linkedin, "LinkedIn", ""),
+                icon(icon.resume, "Resume", ""),
+              ],
+            ),
+            html.hr([
+              attribute.class("w-full border-t-2 border-dark dark:border-light"),
+            ]),
+            html.p(
+              [
+                attribute.class(
+                  "max-w-102 text-center text-dark dark:text-light sm:text-left",
+                ),
+              ],
+              [
+                element.text("Computer Science & Religious Studies at "),
+                html.span([attribute.class("text-orange font-semibold")], [
+                  element.text("Oregon State"),
+                ]),
+                element.text("."),
+                html.br([]),
+                element.text(
+                  "Fan of functional programming, language learning, PLT, and backpacking.",
+                ),
+              ],
+            ),
+            html.div(
+              [
+                attribute.class(
+                  "flex flex-wrap gap-6 items-center w-full p-1 justify-center sm:justify-end",
+                ),
+              ],
+              [
+                html.a(
+                  [
+                    attribute.href("/projects"),
+                    attribute.class(
+                      "text-dark-2 dark:text-light-2 hover:underline",
+                    ),
+                  ],
+                  [
+                    html.text("/projects"),
+                  ],
+                ),
+                html.a(
+                  [
+                    attribute.href("/blog"),
+                    attribute.class(
+                      "text-dark-2 dark:text-light-2 hover:underline",
+                    ),
+                  ],
+                  [
+                    html.text("/blog"),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
       ],
     ),
   ]
