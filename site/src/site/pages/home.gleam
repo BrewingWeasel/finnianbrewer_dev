@@ -20,9 +20,9 @@ pub type Page {
   Projects
 }
 
-pub fn new() -> #(Model, effect.Effect(Msg)) {
+pub fn new(page: Page) -> #(Model, effect.Effect(Msg)) {
   #(
-    Model(mouse_coords: mutable_reference.new(option.None), page: Home),
+    Model(mouse_coords: mutable_reference.new(option.None), page:),
     effect.after_paint(fn(dispatch, _) { dispatch(StartAnimation) }),
   )
 }
@@ -35,7 +35,7 @@ pub type Msg {
 pub fn update(model: Model, message: Msg) -> #(Model, effect.Effect(Msg)) {
   case message {
     StartAnimation -> #(
-      model,
+      echo model,
       ethereal.init_animation("canvas", bars_animation.draw(model.mouse_coords)),
     )
     MouseMoved(x, y) -> {
@@ -67,58 +67,69 @@ pub fn view(model: Model) -> element.Element(Msg) {
     Home -> homepage()
     Projects -> projects()
   }
-  html.div([], [
-    html.canvas([
-      attribute.id("canvas"),
-      attribute.class("fixed top-0 right-0"),
-      attribute.width(700),
-      attribute.height(1200),
-      attribute.style("transform", "scaleX(-1)"),
-      event.on("mousemove", {
-        use x <- decode.field("offsetX", decode.int)
-        use y <- decode.field("offsetY", decode.int)
+  html.div(
+    [
+      attribute.class("bg-light dark:bg-dark w-screen h-screen flex"),
+    ],
+    [
+      html.canvas([
+        attribute.id("canvas"),
+        attribute.class("hidden sm:block fixed top-0 right-0"),
+        attribute.style("transform", "scaleX(-1)"),
+        attribute.width(700),
+        attribute.height(1200),
+        event.on("mousemove", {
+          use x <- decode.field("offsetX", decode.int)
+          use y <- decode.field("offsetY", decode.int)
 
-        decode.success(MouseMoved(x, y))
-      }),
-    ]),
-    html.div(
-      [
-        attribute.class("bg-light dark:bg-dark w-screen h-screen flex"),
-      ],
-      contents,
-    ),
-  ])
+          decode.success(MouseMoved(x, y))
+        }),
+      ]),
+      ..contents
+    ],
+  )
 }
 
 fn homepage() {
   [
     html.div(
       [
-        attribute.class("h-screen flex items-center"),
+        attribute.class(
+          "min-h-dvh w-full flex items-center px-5 py-12 sm:px-10 md:px-16 lg:px-30",
+        ),
       ],
       [
         html.div([attribute.class("flex flex-col items-center gap-1 ml-30")], [
-          html.div([attribute.class("flex gap-2")], [
-            html.h1(
-              [
-                attribute.class(
-                  "text-4xl font-bold text-center text-dark dark:text-light mr-4",
-                ),
-              ],
-              [
-                html.text("Finnian Brewer"),
-              ],
-            ),
-            icon(icon.github, "GitHub", "https://github.com/brewingweasel"),
-            icon(icon.linkedin, "LinkedIn", ""),
-            icon(icon.resume, "Resume", ""),
-          ]),
+          html.div(
+            [
+              attribute.class(
+                "flex flex-wrap items-center justify-center gap-2 sm:justify-start",
+              ),
+            ],
+            [
+              html.h1(
+                [
+                  attribute.class(
+                    "w-full text-4xl font-bold text-center sm:text-left text-dark dark:text-light sm:w-auto sm:mr-4",
+                  ),
+                ],
+                [
+                  html.text("Finnian Brewer"),
+                ],
+              ),
+              icon(icon.github, "GitHub", "https://github.com/brewingweasel"),
+              icon(icon.linkedin, "LinkedIn", ""),
+              icon(icon.resume, "Resume", ""),
+            ],
+          ),
           html.hr([
             attribute.class("w-full border-t-2 border-dark dark:border-light"),
           ]),
           html.p(
             [
-              attribute.class("max-w-102 text-left text-dark dark:text-light"),
+              attribute.class(
+                "max-w-102 text-center text-dark dark:text-light sm:text-left",
+              ),
             ],
             [
               element.text("Computer Science & Religious Studies at "),
@@ -134,7 +145,9 @@ fn homepage() {
           ),
           html.div(
             [
-              attribute.class("flex gap-6 items-center w-full p-1 justify-end"),
+              attribute.class(
+                "flex flex-wrap gap-6 items-center w-full p-1 justify-center sm:justify-end",
+              ),
             ],
             [
               html.a(
@@ -172,7 +185,7 @@ fn projects() {
     html.div(
       [
         attribute.class(
-          "bg-light dark:bg-dark h-screen flex flex-col ml-44 mt-30 gap-3",
+          "bg-light dark:bg-dark min-h-dvh w-full flex flex-col gap-3 px-5 py-12 sm:px-10 md:px-16 lg:ml-44 lg:mt-30 lg:px-0 lg:py-0",
         ),
       ],
       [
@@ -264,29 +277,30 @@ fn project(name: String, description: String, links, tags) {
   html.div(
     [
       attribute.class(
-        "bg-light-2 dark:bg-dark-0-5 py-4 px-4 rounded-lg text-dark dark:text-light max-w-120",
+        "bg-light-2 dark:bg-dark-0-5 py-4 px-4 rounded-lg text-dark dark:text-light w-full max-w-120",
       ),
-      // attribute.href(link),
-    // attribute.target("_blank"),
     ],
     [
-      html.div([attribute.class("flex w-full justify-between")], [
+      html.div([attribute.class("flex w-full justify-between gap-3")], [
         html.h2(
           [
             attribute.class(
-              "text-2xl font-semibold text-dark-2 dark:text-light-3",
+              "min-w-0 break-words text-2xl font-semibold text-dark-2 dark:text-light-3",
             ),
           ],
           [
             html.text(name),
           ],
         ),
-        html.div([attribute.class("flex gap-3")], icons),
+        html.div([attribute.class("flex shrink-0 gap-3")], icons),
       ]),
       html.p([], [
         html.text(description),
       ]),
-      html.div([attribute.class("flex gap-2 w-full mt-1 justify-end")], tags),
+      html.div(
+        [attribute.class("flex flex-wrap gap-2 w-full mt-1 justify-end")],
+        tags,
+      ),
     ],
   )
 }

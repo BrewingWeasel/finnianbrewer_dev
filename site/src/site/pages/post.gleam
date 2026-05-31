@@ -164,11 +164,11 @@ pub fn view(model: Model) -> element.Element(Msg) {
   html.div(
     [
       attribute.class(
-        "flex flex-col items-center justify-center bg-light dark:bg-dark",
+        "min-h-dvh w-full flex flex-col items-center bg-light dark:bg-dark px-5 py-10 sm:px-8",
       ),
     ],
     [
-      html.div([attribute.class("w-180")], [
+      html.div([attribute.class("w-full max-w-180")], [
         html.div(
           [
             attribute.class("text-dark dark:text-light w-full"),

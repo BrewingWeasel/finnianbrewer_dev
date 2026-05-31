@@ -78,8 +78,9 @@
   overflow-x: auto;
   border-radius: 0.5rem;
   padding: 1rem;
-  font-size: 0.9rem;
+  font-size: clamp(0.78rem, 2.5vw, 0.9rem);
   line-height: 1.65;
+  max-width: 100%;
 }
 
 .blog-code-block code {
