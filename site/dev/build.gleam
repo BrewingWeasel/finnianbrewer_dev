@@ -10,7 +10,12 @@ import site/pages/home
 pub fn main() {
   let _ = simplifile.create_directory_all("dist/blog")
   let assert Ok(_) =
-    shellout.command("bash", with: ["bundle.sh"], in: ".", opt: [])
+    shellout.command(
+      "gleam",
+      with: ["run", "-m", "lustre/dev", "build"],
+      in: ".",
+      opt: [],
+    )
 
   let #(home, _effect) = home.new(home.Home)
   render(site.Home(home), site.HydratedHome, "index")
