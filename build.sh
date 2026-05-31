@@ -3,7 +3,7 @@ set -euo pipefail
 
 GLEAM_VERSION="1.16.0"
 
-# apt-get install -y erlang
+apt-get install -y erlang
 
 mkdir -p bin
 
