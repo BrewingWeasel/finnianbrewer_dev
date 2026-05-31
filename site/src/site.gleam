@@ -7,6 +7,7 @@ import lustre/effect
 import lustre/element
 import modem
 import site/pages/home
+import site/pages/notfound
 import site/pages/post
 
 pub fn main() -> Nil {
@@ -38,6 +39,7 @@ pub type HydratedPage {
   HydratedHome
   HydratedProjects
   HydratedBlogPost
+  HydratedNotFound
 }
 
 pub fn hydrated_page_to_json(hydrated_page: HydratedPage) -> json.Json {
@@ -45,6 +47,7 @@ pub fn hydrated_page_to_json(hydrated_page: HydratedPage) -> json.Json {
     HydratedHome -> json.string("hydrated_home")
     HydratedProjects -> json.string("hydrated_projects")
     HydratedBlogPost -> json.string("hydrated_blog_post")
+    HydratedNotFound -> json.string("hydrated_not_found")
   }
 }
 
@@ -54,13 +57,14 @@ pub fn hydrated_page_decoder() -> decode.Decoder(HydratedPage) {
     "hydrated_home" -> decode.success(HydratedHome)
     "hydrated_projects" -> decode.success(HydratedProjects)
     "hydrated_blog_post" -> decode.success(HydratedBlogPost)
-    _ -> decode.failure(HydratedHome, "HydratedPage")
+    _ -> decode.failure(HydratedNotFound, "HydratedPage")
   }
 }
 
 pub type Page {
   Home(home.Model)
   Post(post.Model)
+  NotFound
 }
 
 pub type Msg {
@@ -83,6 +87,9 @@ fn initialize_contents(hydrated_page: HydratedPage) {
       let #(model, effect) = post.new()
       #(Post(model), effect.map(effect, PostMsg))
     }
+    HydratedNotFound -> {
+      #(NotFound, effect.none())
+    }
   }
 }
 
@@ -96,9 +103,10 @@ fn init(hydrated_page: HydratedPage) -> #(Page, effect.Effect(Msg)) {
 
 fn page_at_url(uri: uri.Uri) -> HydratedPage {
   case uri.path_segments(uri.path) {
+    [] -> HydratedHome
     ["projects"] -> HydratedProjects
     ["post", _] -> HydratedBlogPost
-    _ -> HydratedHome
+    _ -> HydratedNotFound
   }
 }
 
@@ -128,5 +136,6 @@ pub fn view(page: Page) -> element.Element(Msg) {
   case page {
     Home(model) -> home.view(model) |> element.map(HomeMsg)
     Post(model) -> post.view(model) |> element.map(PostMsg)
+    NotFound -> notfound.view()
   }
 }

@@ -22,6 +22,8 @@ pub fn main() {
 
   let #(projects, _effect) = home.new(home.Projects)
   render(site.Home(projects), site.HydratedProjects, "projects")
+
+  render(site.NotFound, site.HydratedNotFound, "404")
 }
 
 fn render(page, hydrated, location) {
