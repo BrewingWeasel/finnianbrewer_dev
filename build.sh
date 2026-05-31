@@ -7,11 +7,12 @@ mkdir -p bin
 
 curl -fsSL "https://github.com/gleam-lang/gleam/releases/download/v${GLEAM_VERSION}/gleam-v${GLEAM_VERSION}-x86_64-unknown-linux-musl.tar.gz" \
   | tar -xz -C ./bin
+export PATH="$PWD/bin:$PATH"
 
-./bin/gleam --version
+gleam --version
 
 cd site
 bun install
-../bin/gleam run -m build
+gleam run -m build
 
 ls -l site/dist
