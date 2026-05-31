@@ -132,7 +132,7 @@ fn homepage() {
             html.p(
               [
                 attribute.class(
-                  "max-w-102 text-center text-dark dark:text-light sm:text-left",
+                  "max-w-102 text-center text-dark dark:text-light sm:text-left z-10",
                 ),
               ],
               [
@@ -150,7 +150,7 @@ fn homepage() {
             html.div(
               [
                 attribute.class(
-                  "flex flex-wrap gap-6 items-center w-full p-1 justify-center sm:justify-end",
+                  "flex flex-wrap gap-6 items-center w-full p-1 justify-center sm:justify-end z-10",
                 ),
               ],
               [
