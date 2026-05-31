@@ -13,4 +13,5 @@ curl -fsSL "https://github.com/gleam-lang/gleam/releases/download/v${GLEAM_VERSI
 ./bin/gleam --version
 
 cd site
+bun install
 ../bin/gleam run -m build
