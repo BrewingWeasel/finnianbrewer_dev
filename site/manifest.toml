@@ -7,7 +7,7 @@ packages = [
   { name = "casefold", version = "2.1.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "casefold", source = "hex", outer_checksum = "6E1EBB01B945448EE43BE5618F122341F9D876442E65F28FD3948009C31CE3E5" },
   { name = "directories", version = "1.2.0", build_tools = ["gleam"], requirements = ["envoy", "gleam_stdlib", "platform", "simplifile"], otp_app = "directories", source = "hex", outer_checksum = "D13090CFCDF6759B87217E8DDD73A75903A700148A82C1D33799F333E249BF9E" },
   { name = "envoy", version = "1.2.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "envoy", source = "hex", outer_checksum = "9C6FBB6BFA02A52798BEEC5977A738CAD6E4A057F4B67FD0C8061AD2502C191A" },
-  { name = "ethereal", version = "1.0.0", build_tools = ["gleam"], requirements = ["gleam_community_colour", "gleam_community_maths", "gleam_javascript", "gleam_stdlib", "lustre"], source = "local", path = "../../ethereal" },
+  { name = "ethereal", version = "1.0.0", build_tools = ["gleam"], requirements = ["gleam_community_colour", "gleam_community_maths", "gleam_javascript", "gleam_stdlib", "lustre"], source = "git", repo = "https://github.com/BrewingWeasel/ethereal", commit = "d5e85ec8cfb95f82cbdefbccaa2ada090e6278cc" },
   { name = "exception", version = "2.1.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "exception", source = "hex", outer_checksum = "329D269D5C2A314F7364BD2711372B6F2C58FA6F39981572E5CA68624D291F8C" },
   { name = "filepath", version = "1.1.2", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "filepath", source = "hex", outer_checksum = "B06A9AF0BF10E51401D64B98E4B627F1D2E48C154967DA7AF4D0914780A6D40A" },
   { name = "gleam_community_ansi", version = "1.5.0", build_tools = ["gleam"], requirements = ["gleam_community_colour", "gleam_regexp", "gleam_stdlib"], otp_app = "gleam_community_ansi", source = "hex", outer_checksum = "B5AA433AF84313E23FDF90CCFF752B9380FE9FFCE02B2949D49B7AACCC77B16D" },
@@ -52,7 +52,7 @@ packages = [
 ]
 
 [requirements]
-ethereal = { path = "../../ethereal" }
+ethereal = { git = "https://github.com/BrewingWeasel/ethereal", ref = "d5e85ec" }
 gleam_community_colour = { version = ">= 2.0.4 and < 3.0.0" }
 gleam_json = { version = ">= 3.1.0 and < 4.0.0" }
 gleam_stdlib = { version = ">= 1.0.0 and < 2.0.0" }
