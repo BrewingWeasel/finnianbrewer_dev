@@ -85,6 +85,8 @@ fn page_wrapper(contents, model_json) {
         json.to_string(model_json),
       ),
     ]),
-    html.body([], [html.div([attribute.id("app")], [contents])]),
+    html.body([attribute.class("bg-light dark:bg-dark")], [
+      html.div([attribute.id("app")], [contents]),
+    ]),
   ])
 }

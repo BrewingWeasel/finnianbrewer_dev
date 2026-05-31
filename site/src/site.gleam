@@ -1,6 +1,5 @@
 import gleam/dynamic/decode
 import gleam/json
-import gleam/option
 import gleam/result
 import gleam/uri
 import lustre
@@ -13,21 +12,27 @@ import site/pages/post
 pub fn main() -> Nil {
   let app = lustre.application(init, update, view)
 
-  let hydrated_data =
-    retrieve_data()
-    |> option.to_result(Nil)
-    |> result.try(fn(data) {
-      result.map_error(json.parse(data, hydrated_page_decoder()), fn(_) { Nil })
-    })
+  let page =
+    modem.initial_uri()
+    |> result.map(page_at_url)
     |> result.unwrap(HydratedHome)
 
-  let assert Ok(_) = lustre.start(app, "#app", hydrated_data)
+  // Use if there is ever actually hydrated data beyond just the url
+  // let hydrated_data =
+  //   retrieve_data()
+  //   |> option.to_result(Nil)
+  //   |> result.try(fn(data) {
+  //     result.map_error(json.parse(data, hydrated_page_decoder()), fn(_) { Nil })
+  //   })
+  //   |> result.unwrap(HydratedHome)
+
+  let assert Ok(_) = lustre.start(app, "#app", page)
 
   Nil
 }
 
-@external(javascript, "./site_ffi.mjs", "retrieveData")
-fn retrieve_data() -> option.Option(String)
+// @external(javascript, "./site_ffi.mjs", "retrieveData")
+// fn retrieve_data() -> option.Option(String)
 
 pub type HydratedPage {
   HydratedHome
@@ -83,14 +88,17 @@ fn initialize_contents(hydrated_page: HydratedPage) {
 
 fn init(hydrated_page: HydratedPage) -> #(Page, effect.Effect(Msg)) {
   let #(model, effect) = initialize_contents(hydrated_page)
-  #(model, effect.batch([modem.init(on_url_change), effect]))
+  #(
+    model,
+    effect.batch([modem.init(fn(uri) { ChangePage(page_at_url(uri)) }), effect]),
+  )
 }
 
-fn on_url_change(uri: uri.Uri) -> Msg {
+fn page_at_url(uri: uri.Uri) -> HydratedPage {
   case uri.path_segments(uri.path) {
-    ["projects"] -> ChangePage(HydratedProjects)
-    ["post", _] -> ChangePage(HydratedBlogPost)
-    _ -> ChangePage(HydratedHome)
+    ["projects"] -> HydratedProjects
+    ["post", _] -> HydratedBlogPost
+    _ -> HydratedHome
   }
 }
 

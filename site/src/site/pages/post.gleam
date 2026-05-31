@@ -169,6 +169,29 @@ pub fn view(model: Model) -> element.Element(Msg) {
     ],
     [
       html.div([attribute.class("w-full max-w-180")], [
+        html.nav(
+          [
+            attribute.class(
+              "mb-4 flex items-center gap-2 text-sm text-dark-2 dark:text-light-2",
+            ),
+            attribute.attribute("aria-label", "Breadcrumb"),
+          ],
+          [
+            html.a(
+              [
+                attribute.href("/"),
+                attribute.class("hover:underline"),
+              ],
+              [html.text("Home")],
+            ),
+            html.span([attribute.class("text-dark-3 dark:text-light-3")], [
+              html.text("/"),
+            ]),
+            html.span([attribute.class("text-dark dark:text-light")], [
+              html.text("Blog"),
+            ]),
+          ],
+        ),
         html.div(
           [
             attribute.class("text-dark dark:text-light w-full"),

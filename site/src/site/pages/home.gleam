@@ -190,10 +190,33 @@ fn projects() {
     html.div(
       [
         attribute.class(
-          "bg-light dark:bg-dark min-h-dvh w-full flex flex-col gap-3 px-5 py-12 sm:px-10 md:px-16 lg:ml-44 lg:mt-30 lg:px-0 lg:py-0",
+          "bg-light dark:bg-dark min-h-full w-full flex flex-col gap-3 px-5 py-12 sm:px-10 md:px-16 lg:ml-44 lg:mt-30 lg:px-0 lg:py-0",
         ),
       ],
       [
+        html.nav(
+          [
+            attribute.class(
+              "flex items-center gap-2 text-sm text-dark-2 dark:text-light-2",
+            ),
+            attribute.attribute("aria-label", "Breadcrumb"),
+          ],
+          [
+            html.a(
+              [
+                attribute.href("/"),
+                attribute.class("hover:underline"),
+              ],
+              [html.text("Home")],
+            ),
+            html.span([attribute.class("text-dark-3 dark:text-light-3")], [
+              html.text("/"),
+            ]),
+            html.span([attribute.class("text-dark dark:text-light")], [
+              html.text("Projects"),
+            ]),
+          ],
+        ),
         html.h1(
           [
             attribute.class(
