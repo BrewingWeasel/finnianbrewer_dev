@@ -23,9 +23,11 @@ mork = ">= 1.12.1 and < 2.0.0"
 maud = ">= 1.0.0 and < 2.0.0"
 gleam_json = ">= 3.1.0 and < 4.0.0"
 modem = ">= 2.1.3 and < 3.0.0"
+gleam_time = ">= 1.8.0 and < 2.0.0"
 
 [dev_dependencies]
 gleeunit = ">= 1.0.0 and < 2.0.0"
 lustre_dev_tools = ">= 2.3.6 and < 3.0.0"
 simplifile = ">= 2.4.0 and < 3.0.0"
 shellout = ">= 1.8.0 and < 2.0.0"
+gleamgen = ">= 1.0.1 and < 2.0.0"

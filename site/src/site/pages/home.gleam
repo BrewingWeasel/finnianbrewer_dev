@@ -1,7 +1,9 @@
 import ethereal
 import gleam/dynamic/decode
+import gleam/int
 import gleam/list
 import gleam/option.{type Option, Some}
+import gleam/time/calendar
 import javascript/mutable_reference.{type MutableReference}
 import lustre/attribute
 import lustre/effect
@@ -10,6 +12,7 @@ import lustre/element/html
 import lustre/event
 import site/components/bars_animation
 import site/components/icon
+import site/posts
 
 pub type Model {
   Model(mouse_coords: MutableReference(Option(#(Int, Int))), page: Page)
@@ -18,6 +21,7 @@ pub type Model {
 pub type Page {
   Home
   Projects
+  Blog
 }
 
 pub fn new(page: Page) -> #(Model, effect.Effect(Msg)) {
@@ -66,6 +70,7 @@ pub fn view(model: Model) -> element.Element(Msg) {
   let #(contents, mobile_classes) = case model.page {
     Home -> #(homepage(), "")
     Projects -> #(projects(), "max-md:hidden")
+    Blog -> #(blog(), "max-md:hidden")
   }
   html.div(
     [
@@ -276,6 +281,87 @@ fn projects() {
       ],
     ),
   ]
+}
+
+fn blog() {
+  let posts =
+    posts.get_posts()
+    |> list.sort(by: fn(first, second) {
+      calendar.naive_date_compare(first.1.date, second.1.date)
+    })
+    |> list.map(fn(post) { post_link(post.0, post.1) })
+
+  [
+    html.div(
+      [
+        attribute.class(
+          "bg-light dark:bg-dark min-h-full w-full flex flex-col gap-3 px-5 py-12 sm:px-10 md:px-16 lg:ml-44 lg:mt-30 lg:px-0 lg:py-0",
+        ),
+      ],
+      [
+        html.nav(
+          [
+            attribute.class(
+              "flex items-center gap-2 text-sm text-dark-2 dark:text-light-2",
+            ),
+            attribute.attribute("aria-label", "Breadcrumb"),
+          ],
+          [
+            html.a(
+              [
+                attribute.href("/"),
+                attribute.class("hover:underline"),
+              ],
+              [html.text("Home")],
+            ),
+            html.span([attribute.class("text-dark-3 dark:text-light-3")], [
+              html.text("/"),
+            ]),
+            html.span([attribute.class("text-dark dark:text-light")], [
+              html.text("Blog"),
+            ]),
+          ],
+        ),
+        html.h1(
+          [
+            attribute.class(
+              "text-4xl font-bold text-left text-dark dark:text-light",
+            ),
+          ],
+          [
+            html.text("Blog"),
+          ],
+        ),
+        ..posts
+      ],
+    ),
+  ]
+}
+
+fn post_link(slug, post: posts.Post) {
+  let date_text =
+    calendar.month_to_string(post.date.month)
+    <> " "
+    <> int.to_string(post.date.day)
+    <> ", "
+    <> int.to_string(post.date.year)
+
+  html.a(
+    [
+      attribute.href("/blog/" <> slug),
+      attribute.class(
+        "block w-full max-w-120 text-dark dark:text-light bg-light-2 dark:bg-dark-0-5 px-4 py-3 rounded-lg hover:bg-light-3 dark:hover:bg-dark-2 transition-colors",
+      ),
+    ],
+    [
+      html.h2([attribute.class("text-xl font-semibold")], [
+        html.text(post.title),
+      ]),
+      html.p([attribute.class("text-sm text-dark-2 dark:text-light-2")], [
+        html.text(date_text),
+      ]),
+    ],
+  )
 }
 
 fn project(name: String, description: String, links, tags) {

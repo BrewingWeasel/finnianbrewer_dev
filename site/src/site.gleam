@@ -1,5 +1,6 @@
 import gleam/dynamic/decode
 import gleam/json
+import gleam/list
 import gleam/result
 import gleam/uri
 import lustre
@@ -9,6 +10,7 @@ import modem
 import site/pages/home
 import site/pages/notfound
 import site/pages/post
+import site/posts
 
 pub fn main() -> Nil {
   let app = lustre.application(init, update, view)
@@ -16,7 +18,7 @@ pub fn main() -> Nil {
   let page =
     modem.initial_uri()
     |> result.map(page_at_url)
-    |> result.unwrap(HydratedHome)
+    |> result.unwrap(HomeUrl)
 
   // Use if there is ever actually hydrated data beyond just the url
   // let hydrated_data =
@@ -35,29 +37,32 @@ pub fn main() -> Nil {
 // @external(javascript, "./site_ffi.mjs", "retrieveData")
 // fn retrieve_data() -> option.Option(String)
 
-pub type HydratedPage {
-  HydratedHome
-  HydratedProjects
-  HydratedBlogPost
-  HydratedNotFound
+pub type PageUrl {
+  HomeUrl
+  ProjectsUrl
+  BlogUrl
+  BlogPostUrl(String)
+  NotFoundUrl
 }
 
-pub fn hydrated_page_to_json(hydrated_page: HydratedPage) -> json.Json {
+pub fn page_url_to_json(hydrated_page: PageUrl) -> json.Json {
   case hydrated_page {
-    HydratedHome -> json.string("hydrated_home")
-    HydratedProjects -> json.string("hydrated_projects")
-    HydratedBlogPost -> json.string("hydrated_blog_post")
-    HydratedNotFound -> json.string("hydrated_not_found")
+    HomeUrl -> json.string("home")
+    ProjectsUrl -> json.string("projects")
+    BlogUrl -> json.string("blog")
+    BlogPostUrl(slug) -> json.string("blog_post_" <> slug)
+    NotFoundUrl -> json.string("not_found")
   }
 }
 
-pub fn hydrated_page_decoder() -> decode.Decoder(HydratedPage) {
+pub fn page_url_decoder() -> decode.Decoder(PageUrl) {
   use variant <- decode.then(decode.string)
   case variant {
-    "hydrated_home" -> decode.success(HydratedHome)
-    "hydrated_projects" -> decode.success(HydratedProjects)
-    "hydrated_blog_post" -> decode.success(HydratedBlogPost)
-    _ -> decode.failure(HydratedNotFound, "HydratedPage")
+    "home" -> decode.success(HomeUrl)
+    "projects" -> decode.success(ProjectsUrl)
+    "blog" -> decode.success(BlogUrl)
+    "blog_post_" <> slug -> decode.success(BlogPostUrl(slug))
+    _ -> decode.failure(NotFoundUrl, "HydratedPage")
   }
 }
 
@@ -70,43 +75,54 @@ pub type Page {
 pub type Msg {
   HomeMsg(home.Msg)
   PostMsg(post.Msg)
-  ChangePage(HydratedPage)
+  ChangePage(PageUrl)
 }
 
-fn initialize_contents(hydrated_page: HydratedPage) {
-  case hydrated_page {
-    HydratedHome -> {
+fn initialize_contents(page: PageUrl) {
+  case page {
+    HomeUrl -> {
       let #(model, effect) = home.new(home.Home)
       #(Home(model), effect.map(effect, HomeMsg))
     }
-    HydratedProjects -> {
+    ProjectsUrl -> {
       let #(model, effect) = home.new(home.Projects)
       #(Home(model), effect.map(effect, HomeMsg))
     }
-    HydratedBlogPost -> {
-      let #(model, effect) = post.new()
-      #(Post(model), effect.map(effect, PostMsg))
+    BlogUrl -> {
+      let #(model, effect) = home.new(home.Blog)
+      #(Home(model), effect.map(effect, HomeMsg))
     }
-    HydratedNotFound -> {
+    BlogPostUrl(slug) -> {
+      let posts = posts.get_posts()
+      case list.key_find(posts, slug) {
+        Ok(post) -> {
+          let #(model, effect) = post.new(slug, post)
+          #(Post(model), effect.map(effect, PostMsg))
+        }
+        Error(Nil) -> #(NotFound, effect.none())
+      }
+    }
+    NotFoundUrl -> {
       #(NotFound, effect.none())
     }
   }
 }
 
-fn init(hydrated_page: HydratedPage) -> #(Page, effect.Effect(Msg)) {
-  let #(model, effect) = initialize_contents(hydrated_page)
+fn init(page: PageUrl) -> #(Page, effect.Effect(Msg)) {
+  let #(model, effect) = initialize_contents(page)
   #(
     model,
     effect.batch([modem.init(fn(uri) { ChangePage(page_at_url(uri)) }), effect]),
   )
 }
 
-fn page_at_url(uri: uri.Uri) -> HydratedPage {
+fn page_at_url(uri: uri.Uri) -> PageUrl {
   case uri.path_segments(uri.path) {
-    [] -> HydratedHome
-    ["projects"] -> HydratedProjects
-    ["post", _] -> HydratedBlogPost
-    _ -> HydratedNotFound
+    [] -> HomeUrl
+    ["projects"] -> ProjectsUrl
+    ["blog"] -> BlogUrl
+    ["blog", slug] -> BlogPostUrl(slug)
+    _ -> NotFoundUrl
   }
 }
 
@@ -128,7 +144,7 @@ fn update(page: Page, msg: Msg) -> #(Page, effect.Effect(Msg)) {
         }
         _ -> #(page, effect.none())
       }
-    ChangePage(hydrated_page) -> initialize_contents(hydrated_page)
+    ChangePage(page) -> initialize_contents(page)
   }
 }
 

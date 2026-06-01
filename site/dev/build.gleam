@@ -1,4 +1,6 @@
+import create_posts
 import gleam/json
+import gleam/list
 import lustre/attribute
 import lustre/element
 import lustre/element/html
@@ -6,8 +8,12 @@ import shellout
 import simplifile
 import site
 import site/pages/home
+import site/pages/post
+import site/posts
 
 pub fn main() {
+  create_posts.main()
+
   let _ = simplifile.create_directory_all("dist/blog")
   let assert Ok(_) =
     shellout.command(
@@ -18,19 +24,25 @@ pub fn main() {
     )
 
   let #(home, _effect) = home.new(home.Home)
-  render(site.Home(home), site.HydratedHome, "index")
+  render(site.Home(home), site.HomeUrl, "index")
 
   let #(projects, _effect) = home.new(home.Projects)
-  render(site.Home(projects), site.HydratedProjects, "projects")
+  render(site.Home(projects), site.ProjectsUrl, "projects")
 
-  render(site.NotFound, site.HydratedNotFound, "404")
+  list.each(posts.get_posts(), fn(post_pair) {
+    let #(slug, post) = post_pair
+    let #(post_page, _effect) = post.new(slug, post)
+    render(site.Post(post_page), site.BlogPostUrl(slug), "blog/" <> slug)
+  })
+
+  render(site.NotFound, site.NotFoundUrl, "404")
 }
 
 fn render(page, hydrated, location) {
   let assert Ok(_) =
     page
     |> site.view()
-    |> page_wrapper(site.hydrated_page_to_json(hydrated))
+    |> page_wrapper(site.page_url_to_json(hydrated))
     |> element.to_string()
     |> prepend_doctype()
     |> simplifile.write(to: "dist/" <> location <> ".html")
