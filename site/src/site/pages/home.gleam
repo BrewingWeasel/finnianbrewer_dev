@@ -122,8 +122,12 @@ fn homepage() {
                   ],
                 ),
                 icon(icon.github, "GitHub", "https://github.com/brewingweasel"),
-                icon(icon.linkedin, "LinkedIn", ""),
-                icon(icon.resume, "Resume", ""),
+                icon(
+                  icon.linkedin,
+                  "LinkedIn",
+                  "https://www.linkedin.com/in/finnian-brewer-208b162b5",
+                ),
+                icon(icon.resume, "Resume", "https://resume.finnianbrewer.dev/"),
               ],
             ),
             html.hr([
