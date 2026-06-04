@@ -27,8 +27,42 @@ const theme = createCssVariablesTheme({
 });
 
 export function unescapeText(html) {
-	const doc = new DOMParser().parseFromString(html, "text/html");
-	return doc.documentElement.textContent;
+	if (typeof DOMParser !== "undefined") {
+		const doc = new DOMParser().parseFromString(html, "text/html");
+		return doc.documentElement.textContent;
+	}
+
+	return decodeHtmlEntities(html);
+}
+
+const namedEntities = new Map([
+	["amp", "&"],
+	["apos", "'"],
+	["gt", ">"],
+	["lt", "<"],
+	["nbsp", "\u00a0"],
+	["quot", '"'],
+]);
+
+function decodeHtmlEntities(html) {
+	return html.replace(/&(#x[0-9a-f]+|#[0-9]+|[a-z][a-z0-9]+);/gi, (entity, body) => {
+		if (body[0] === "#") {
+			const base = body[1]?.toLowerCase() === "x" ? 16 : 10;
+			const value = Number.parseInt(body.slice(base === 16 ? 2 : 1), base);
+
+			if (Number.isFinite(value)) {
+				try {
+					return String.fromCodePoint(value);
+				} catch (_) {
+					return entity;
+				}
+			}
+
+			return entity;
+		}
+
+		return namedEntities.get(body.toLowerCase()) ?? entity;
+	});
 }
 
 export function highlightCodeBlocks(root) {
