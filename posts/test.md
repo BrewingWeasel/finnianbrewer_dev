@@ -1,16 +1,8 @@
-import gleam/time/calendar
+---
+date: 2026-04-24
+title: Example
+---
 
-pub type Post {
-  Post(title: String, contents: String, tags: List(String), date: calendar.Date)
-}
-
-pub fn get_posts() -> List(#(String, Post)) {
-  [
-    #(
-      "test",
-      Post(
-        "Example",
-        "
 # Example Blog Post
 This is an example blog post to show what features have currently been added to the site.
 
@@ -19,10 +11,10 @@ Code blocks can be rendered:
 let text =
   children
   |> list.map(element.to_string)
-  |> string.join(\"\")
+  |> string.join("")
   |> shiki.unescape_text()
   |> string.trim_end()
-  |> string.split(\"\")
+  |> string.split("")
 ```
 
 ```custom;lang=gleam;id=second;opts=option one|option two
@@ -36,10 +28,4 @@ fn run() {
     Ok(k + 1)
   })
 }
-```",
-        [],
-        calendar.Date(2026, calendar.April, 24),
-      ),
-    ),
-  ]
-}
+```

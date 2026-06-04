@@ -123,20 +123,13 @@ fn codeblock(
           )
         })
 
-      let #(tool_bar_contents, additional_code_attributes) = case
-        dict.get(attributes, "title")
-      {
-        Ok(title) -> #(
-          [
-            html.div([attribute.class(active_button_class)], [
-              element.text(title),
-            ]),
-          ],
-          [],
-        )
-        Error(Nil) -> #(switch_option_buttons, [
-          attribute.attribute("data-magic-move", "true"),
-        ])
+      let tool_bar_contents = case dict.get(attributes, "title") {
+        Ok(title) -> [
+          html.div([attribute.class(active_button_class <> " text-center")], [
+            element.text(title),
+          ]),
+        ]
+        Error(Nil) -> switch_option_buttons
       }
 
       element.fragment([
@@ -153,7 +146,7 @@ fn codeblock(
             attribute.class("language-" <> lang),
             attribute.attribute("data-language", lang),
             attribute.id(id),
-            ..additional_code_attributes
+            attribute.attribute("data-custom-block", "true"),
           ],
           [element.text(selected_text)],
         ),
@@ -173,6 +166,17 @@ fn codeblock(
 pub fn view(model: Model) -> element.Element(Msg) {
   let components =
     components.default()
+    |> components.h1(fn(id, text) {
+      html.h1(
+        [
+          attribute.id(id),
+          attribute.class(
+            "text-3xl my-2 font-bold text-dark-2 dark:text-light-2",
+          ),
+        ],
+        text,
+      )
+    })
     |> components.h3(fn(id, text) {
       html.h3(
         [

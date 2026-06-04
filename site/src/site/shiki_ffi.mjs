@@ -38,7 +38,7 @@ export function highlightCodeBlocks(root) {
 	for (const code of scope.querySelectorAll(
 		"pre code[class*='language-']:not([data-shiki])",
 	)) {
-		if (code.dataset.magicMove === "true") {
+		if (code.dataset.customBlock === "true") {
 			void initialiseMagicBlock(code);
 		} else {
 			void highlightBlock(code);
@@ -110,7 +110,6 @@ async function initialiseMagicBlock(code, selected = 0) {
 		const rendererPre = document.createElement("pre");
 		const wrapper = document.createElement("div");
 		const toolbar = document.getElementById(id + "-toolbar");
-		// const buttons = [...sourcePre.querySelectorAll(":scope > button")];
 		const machine = createMagicMoveMachine(
 			(value) =>
 				codeToKeyedTokens(highlighter, value, {
