@@ -123,30 +123,37 @@ fn codeblock(
           )
         })
 
-      // let titlebar =
-      //   html.div(
-      //     [
-      //       attribute.id("titlebar"),
-      //       attribute.class("flex items-center gap-0 bg-dark-3 dark:bg-light-3"),
-      //     ],
-      //     switch_option_buttons,
-      //   )
+      let #(tool_bar_contents, additional_code_attributes) = case
+        dict.get(attributes, "title")
+      {
+        Ok(title) -> #(
+          [
+            html.div([attribute.class(active_button_class)], [
+              element.text(title),
+            ]),
+          ],
+          [],
+        )
+        Error(Nil) -> #(switch_option_buttons, [
+          attribute.attribute("data-magic-move", "true"),
+        ])
+      }
 
       element.fragment([
         html.div(
           [
-            attribute.id("toolbar"),
+            attribute.id(id <> "-toolbar"),
             attribute.class("flex items-center gap-0 bg-dark-3 dark:bg-light-3"),
           ],
-          switch_option_buttons,
+          tool_bar_contents,
         ),
 
         html.code(
           [
             attribute.class("language-" <> lang),
             attribute.attribute("data-language", lang),
-            attribute.attribute("data-magic-move", "true"),
             attribute.id(id),
+            ..additional_code_attributes
           ],
           [element.text(selected_text)],
         ),
